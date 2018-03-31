@@ -93,6 +93,10 @@ if __name__ == "__main__":
     ret, thresh1 = cv2.threshold(opening, 245, 255, cv2.THRESH_BINARY)
     edged = autoCanny(thresh1)
 
+    plt.figure(1)
+    plt.title('Canny')
+    plt.imshow(edged, cmap='gray')
+
     (_,contour,_) = cv2.findContours(edged, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     for i in range(len(contour)):
@@ -107,10 +111,10 @@ if __name__ == "__main__":
             color = classificate(width, height, roi)
             cv2.drawContours(rgbImage, [box], 0, color, 2)
 
-    plt.figure(1)
+    plt.figure(2)
     plt.title('Threshold')
     plt.imshow(thresh1, cmap='gray')
-    plt.figure(2)
+    plt.figure(3)
     plt.title('Imagen clasificada')
     plt.imshow(rgbImage)
     plt.show()
