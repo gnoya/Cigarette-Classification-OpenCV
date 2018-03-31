@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
-fileName = './images/test.png'
+fileName = './images/test2.png'
 
 def autoCanny(image, sigma = 0.33):
     v = np.median(image)
@@ -14,29 +14,39 @@ def autoCanny(image, sigma = 0.33):
 if __name__ == "__main__":
     origImage = cv2.imread(fileName)
     image = cv2.cvtColor(origImage, cv2.COLOR_BGR2GRAY)
-
+    rgbImage = cv2.cvtColor(origImage, cv2.COLOR_BGR2RGB)
     opening = cv2.morphologyEx(image, cv2.MORPH_OPEN, np.ones((7, 7), np.uint8))
-    # blur = cv2.GaussianBlur(opening,(5,5),0)
+    
     ret3, thresholdImage = cv2.threshold(opening, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
     edged = autoCanny(thresholdImage)
-
-    plt.figure(1)
-    plt.title('Imagen con Canny')
-    plt.imshow(edged, cmap='gray')
 
     (_,contour,_) = cv2.findContours(edged, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     for i in range(len(contour)):
         cnt = contour[i]
         rect = cv2.minAreaRect(cnt)
-        box = cv2.boxPoints(rect)
-        box = np.int0(box)
-        cv2.drawContours(origImage, [box], 0, (0, 255 , 0), 2)
+        width = rect[1][0]
+        height = rect[1][1]
+        if width != 0 and height != 0:
+            box = cv2.boxPoints(rect)
+            box = np.int0(box)
 
-    rgbImage = cv2.cvtColor(origImage, cv2.COLOR_BGR2RGB)
+            if width > height:
+                ratio = width / height
+            else:
+                ratio = height / width
 
-    plt.figure(2)
-    plt.title('Imagen original marcada')
-    plt.imshow(rgbImage)
+            if ratio > 8.5:
+                color = [255, 0, 0]
+            elif ratio > 6:
+                color = [0, 255, 0]
+            else:
+                color = [0, 0, 255]
+
+            cv2.drawContours(rgbImage, [box], 0, color, 2)
+
+    plt.figure(1)
+    plt.title('Size Test')
+    plt.imshow(thresholdImage, cmap='gray')
     plt.show()
