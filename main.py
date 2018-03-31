@@ -2,9 +2,25 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
-fileName = './images/test8.png'
+fileName = './images/test.png'
 cigarRatio = 8
 habanoRatio = 3.5
+
+# cigarH = 101
+# cigarS = 50
+# cigarV = 215
+
+# puroH = 109
+# puroS = 131
+# puroV = 158
+
+# jointH = 100
+# jointS = 22
+# jointV = 187
+
+# habanoH = 107
+# habanoS = 116
+# habanoV = 145
 
 def cropRectangle(img, rect, box):
 
@@ -37,18 +53,27 @@ def classificate(width, height, roi):
     else:
         ratio = height / width
 
-
     b,g,r,_=np.uint8(cv2.mean(roi))
-    print(b,g,r)
-
+    hsv = cv2.cvtColor(np.uint8([[[b,g,r]]]),cv2.COLOR_BGR2HSV)
+    h = hsv[0][0][0]
+    s = hsv[0][0][1]
+    v = hsv[0][0][2]
 
     if ratio > cigarRatio:
-        color = [255, 0, 0]
+        # Debemos clasificar entre purito y cigarrillo. Ver valores aproximados al inicio del codigo.
+        if s < 90 and v > 190:
+            color = [255, 0, 0] # Cigarrillo
+        else:
+            color = [255, 0, 255] # Purito
 
     elif ratio > habanoRatio:
-        color = [0, 255, 0]
+        # Debemos clasificar entre habano y porro. Ver valores aproximados al inicio del codigo.
+        if h < 103 and s < 75:
+            color = [0, 255, 0] # Porro
+        else:
+            color = [0, 255, 255] # Habano
     else:
-        color = [0, 0, 255]
+        color = [0, 0, 255] # Pipa
     return color
 
 def getRectangleValues(rectangle):
@@ -80,13 +105,12 @@ if __name__ == "__main__":
             box = np.int0(box)
             roi = cropRectangle(rgbImage, rect, box)
             color = classificate(width, height, roi)
-
             cv2.drawContours(rgbImage, [box], 0, color, 2)
 
     plt.figure(1)
-    plt.title('Size Test')
+    plt.title('Threshold')
     plt.imshow(thresh1, cmap='gray')
     plt.figure(2)
-    plt.title('Size Test')
+    plt.title('Imagen clasificada')
     plt.imshow(rgbImage)
     plt.show()
