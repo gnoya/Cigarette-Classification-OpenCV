@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
-fileName = './images/test.png'
+fileName = './images/cigars.png'
 
 # Parametros que indican cuan largo es respecto a su ancho.
 cigarRatio = 8
@@ -91,10 +91,17 @@ if __name__ == "__main__":
             color = classificate(width, height, roi)
             cv2.drawContours(rgbImage, [box], 0, color, 2)
 
+    cv2.putText(rgbImage, "Cigarrillos", (45, 630), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+    cv2.putText(rgbImage, "Habanos", (245, 630), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2, cv2.LINE_AA)
+    cv2.putText(rgbImage, "Puritos", (445, 630), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2, cv2.LINE_AA)
+    cv2.putText(rgbImage, "Porros", (45, 680), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+    cv2.putText(rgbImage, "Pipas", (245, 680), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
+
     plt.figure(1)
     plt.title('Threshold')
     plt.imshow(thresh1, cmap='gray')
     plt.figure(2)
     plt.title('Imagen clasificada')
     plt.imshow(rgbImage)
+    
     plt.show()
