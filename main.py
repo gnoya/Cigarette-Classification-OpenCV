@@ -4,15 +4,9 @@ from matplotlib import pyplot as plt
 
 fileName = './images/cigars.png'
 
-# Parametros que indican cuan largo es respecto a su ancho.
-cigarRatio = 8
-habanoRatio = 3.5
-
-# Referencias de colores HSV de cada objeto a clasificar.
-# cigarHSV = 101, 50, 215
-# puroHSV = 109, 131, 158
-# jointHSV = 100, 22, 187
-# habanoHSV = 107, 116, 145
+# Parametros threshold que indican cuán largo debe ser respecto a su ancho.
+cigarPuritoThreshold = 8
+habanoJointThreshold = 4
 
 # Esta función retorna una porción especifíca de una imagen dada.
 def cropRectangle(img, rect, box):
@@ -20,14 +14,10 @@ def cropRectangle(img, rect, box):
     rows, cols = img.shape[0], img.shape[1]
     M = cv2.getRotationMatrix2D((cols/2, rows/2), angle, 1)
     rotatedImage = cv2.warpAffine(img, M, (cols, rows))
-
-    # Rotamos la imagen segun el angulo de inclinacion del rectángulo obtenido con minAreaRect().
-    # Esto lo hacemos para poder cortar la imagen inclinada correspondiente de forma horizontal / vertical.
+    # Rotamos la imagen segun el angulo de inclinacion del rectángulo obtenido con minAreaRect() para realizar el recorte.
     pts = np.int0(cv2.transform(np.array([box]), M))[0]    
     pts[pts < 0] = 0
-
     croppedImage = rotatedImage[pts[1][1]:pts[0][1], pts[1][0]:pts[2][0]]
-
     return croppedImage
 
 # Esta función retorna el color para pintar los contornos dependiendo de las características detectadas.
@@ -36,7 +26,6 @@ def classificate(width, height, roi):
         ratio = width / height
     else:
         ratio = height / width
-
     # Tomamos el color promedio de la porción de la imagen proporcionada y lo convertimos a HSV.
     b,g,r,_ = np.uint8(cv2.mean(roi))
     hsv = cv2.cvtColor(np.uint8([[[b,g,r]]]), cv2.COLOR_BGR2HSV)
@@ -44,21 +33,22 @@ def classificate(width, height, roi):
     s = hsv[0][0][1]
     v = hsv[0][0][2]
 
-    if ratio > cigarRatio:
-        # Debemos clasificar entre purito y cigarrillo. Ver valores aproximados al inicio del código.
+    if ratio > cigarPuritoThreshold:
+        # Debemos clasificar entre purito y cigarrillo. Ver valores aproximados en el README.
         if s < 90 and v > 190:
-            color = [255, 0, 0] # Cigarrillo
+            color = [255, 0, 0] # Cigarrillo.
         else:
-            color = [255, 0, 255] # Purito
+            color = [255, 0, 255] # Purito.
 
-    elif ratio > habanoRatio:
-        # Debemos clasificar entre habano y porro. Ver valores aproximados al inicio del código.
+    elif ratio > habanoJointThreshold:
+        # Debemos clasificar entre habano y porro. Ver valores aproximados en el README.
         if h < 103 and s < 75:
-            color = [0, 255, 0] # Porro
+            color = [0, 255, 0] # Porro.
         else:
-            color = [0, 255, 255] # Habano
+            color = [0, 255, 255] # Habano.
+    
     else:
-        color = [0, 0, 255] # Pipa
+        color = [0, 0, 255] # Pipa.
     return color
 
 # Nos retorna el ancho y el largo del rectángulo dado.
