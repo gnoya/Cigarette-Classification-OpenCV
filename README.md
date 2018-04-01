@@ -3,7 +3,7 @@
 Este algoritmo es capaz de clasificar entre 5 tipos de cigarrillos: Habano, purito, porro, pipa y cigarrillo común utilizando la libreria de OpenCV. La imagen que se utilizó para las pruebas fué la siguiente:
 
 <p align="center">
-  <img src="./images/cigarsOriginal.png" width="300" height="350">
+  <img src="https://github.com/gnoya/Cigarette-Classification-OpenCV/blob/master/images/cigarsOriginal.png" width="396" height="396">
 </p>
 
 <p align="center">
@@ -42,7 +42,7 @@ Se puede apreciar que el valor de saturación es muy diferente entre el cigarril
 
 # Resultados
 <p align="center">
-  <img src="./images/results.png" width="300" height="350">
+  <img src="https://github.com/gnoya/Cigarette-Classification-OpenCV/blob/master/images/results.png" width="411" height="482">
 </p>
 <p align="center">
   Imagen clasificada en colores.
